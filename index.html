@@ -1,13 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-  
+    <title>Accordion with Progress Bar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        .accordion-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-wrapper:hover {
+            transform: translateY(-5px);
+        }
+
+        .accordion {
+            flex: 1;
+            min-width: 300px;
+            margin: 20px;
+        }
+
+        .accordion-item {
+            width: 90%;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+
+        .accordion-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #32CD33;
+        }
+
+        .accordion-item.active::after {
+            animation: progress 10s linear forwards; /* Increased to 10 seconds */
+        }
+
+        @keyframes progress {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        .accordion-item:not(.active)::after {
+            width: 0;
+            animation: none; /* Prevent animation on non-active items */
+        }
+
+        .accordion-header {
+            background: transparent;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+
+        .accordion-item:not(.active) .accordion-header {
+            color: #888;
+        }
+
+        .accordion-item:not(.active) .accordion-header:hover {
+            color: #171F29;
+            transform: translateX(5px);
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease;
+            padding: 0;
+            color: #555;
+            font-size: 15px;
+            opacity: 0;
+        }
+
+        .accordion-item.active .accordion-body {
+            max-height: 300px;
+            padding: 10px 0 15px 0;
+            opacity: 1;
+        }
+
+        .accordion-header .icon {
+            transition: transform 0.3s ease, color 0.3s ease;
+            color: #171F29;
+        }
+
+        .accordion-item.active .icon {
+            color: #32CD33;
+            transform: rotate(180deg);
+        }
+
+        .image-preview {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            background: #f9f9f9;
+            border-radius: 16px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .image-preview::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(23, 31, 41, 0.1);
+            border-radius: 20px;
+            z-index: -1;
+            transition: border-color 0.3s ease;
+        }
+
+        .image-preview:hover::before {
+            border-color: rgba(23, 31, 41, 0.3);
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            object-fit: fill;
+            border-radius: 10px;
+            transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            transform: scale(1) rotateX(0deg);
+        }
+
+        .image-preview img:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-preview img.loading {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+        }
+    </style>
 </head>
+
 <body>
-    <img style="width: 100%; height: 100%;"   src="https://olqan.com/wp-content/uploads/2025/06/Sales.png" alt="">
-    
+    <div class="accordion-wrapper">
+        <div class="accordion">
+            <div class="accordion-item active"
+                data-img="https://olqan.com/wp-content/uploads/2025/06/Finance-Colnsole.png">
+                <a class="accordion-header">
+                    <span>Visual Pipeline View</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                </a>
+                <div class="accordion-body">
+                    <p>Track deals at each stage with intuitive drag-and-drop interfaces.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item" data-img="https://olqan.com/wp-content/uploads/2025/06/Sales-Hub.png">
+                <a class="accordion-header">
+                    <span>Customizable Sales Stages</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                </a>
+                <div class="accordion-body">
+                    <p>Configure your pipeline to match your unique sales process.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item" data-img="https://olqan.com/wp-content/uploads/2025/06/Project-Suite.png">
+                <a class="accordion-header">
+                    <span>Deal Tracking</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                </a>
+                <div class="accordion-body">
+                    <p>Monitor key information, including deal value, probability, and expected close date.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item" data-img="https://olqan.com/wp-content/uploads/2025/06/HR-Portal.png">
+                <a class="accordion-header">
+                    <span>Activity Management</span>
+                    <span class="icon"><i class="fas fa-chevron-down"></i></span>
+                </a>
+                <div class="accordion-body">
+                    <p>Schedule and track calls, meetings, and follow-ups.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-preview">
+            <img id="preview-img" src="https://olqan.com/wp-content/uploads/2025/06/Finance-Colnsole.png"
+                alt="Preview Image" />
+        </div>
+    </div>
+
+    <script>
+        const headers = document.querySelectorAll('.accordion-header');
+        const previewImg = document.getElementById('preview-img');
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        let currentIndex = 0;
+        let animationFrameId = null;
+
+        // Function to activate an accordion item
+        function activateAccordion(index) {
+            accordionItems.forEach(item => item.classList.remove('active'));
+            const newActiveItem = accordionItems[index];
+            newActiveItem.classList.add('active');
+
+            const imgSrc = newActiveItem.getAttribute('data-img');
+            previewImg.classList.add('loading');
+            previewImg.style.opacity = '0';
+            previewImg.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                previewImg.src = imgSrc;
+                previewImg.style.opacity = '1';
+                previewImg.style.transform = 'scale(1)';
+                previewImg.classList.remove('loading');
+            }, 200);
+
+            // Start progress bar animation
+            startProgressAnimation(index);
+        }
+
+        // Function to start progress bar animation
+        function startProgressAnimation(index) {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+            const activeItem = accordionItems[index];
+            let startTime = null;
+
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min((elapsed / 10000) * 100, 100); // 10000ms = 10s
+                activeItem.style.setProperty('--progress-width', `${progress}%`);
+
+                if (progress < 100) {
+                    animationFrameId = requestAnimationFrame(animate);
+                } else {
+                    // Move to the next item
+                    currentIndex = (currentIndex + 1) % accordionItems.length;
+                    activateAccordion(currentIndex);
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstItem = document.querySelector('.accordion-item.active');
+            const firstImgSrc = firstItem.getAttribute('data-img');
+            previewImg.src = firstImgSrc;
+            previewImg.style.opacity = '1';
+            startProgressAnimation(0);
+        });
+
+        // Handle header clicks
+        headers.forEach((header, index) => {
+            header.addEventListener('click', () => {
+                if (!header.parentElement.classList.contains('active')) {
+                    currentIndex = index;
+                    activateAccordion(index);
+                }
+            });
+
+            header.addEventListener('mouseenter', () => {
+                if (!header.parentElement.classList.contains('active')) {
+                    header.style.transform = 'translateX(5px)';
+                }
+            });
+
+            header.addEventListener('mouseleave', () => {
+                if (!header.parentElement.classList.contains('active')) {
+                    header.style.transform = 'translateX(0)';
+                }
+            });
+        });
+
+        // Pause/resume animation on hover
+        document.querySelector('.accordion-wrapper').addEventListener('mouseenter', () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        });
+
+        document.querySelector('.accordion-wrapper').addEventListener('mouseleave', () => {
+            startProgressAnimation(currentIndex);
+        });
+    </script>
 </body>
 </html>
