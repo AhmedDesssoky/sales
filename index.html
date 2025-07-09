@@ -19,7 +19,7 @@
             /* transition: transform 0.3s ease; */
         }
 
-      
+
 
         .accordion {
             flex: 1;
@@ -44,13 +44,15 @@
         }
 
         .accordion-item.active::after {
-            animation: progress 10s linear forwards; /* 10-second horizontal progress for large screens */
+            animation: progress 10s linear forwards;
+            /* 10-second horizontal progress for large screens */
         }
 
         @keyframes progress {
             from {
                 width: 0;
             }
+
             to {
                 width: 100%;
             }
@@ -73,7 +75,8 @@
             justify-content: space-between;
             align-items: center;
             transition: color 0.3s ease, transform 0.2s ease;
-            position: relative; /* Ensure accurate positioning */
+            position: relative;
+            /* Ensure accurate positioning */
         }
 
         .accordion-item:not(.active) .accordion-header {
@@ -93,11 +96,12 @@
             color: #555;
             font-size: 15px;
             opacity: 0;
-           
+
         }
 
         .accordion-item.active .accordion-body {
-            max-height: 500px; /* Increased to accommodate image */
+            max-height: 500px;
+            /* Increased to accommodate image */
             padding: 10px 0 15px 0;
             opacity: 1;
         }
@@ -161,7 +165,8 @@
         }
 
         .accordion-item-image {
-            display: none; /* Hidden by default for all screens */
+            display: none;
+            /* Hidden by default for all screens */
             max-width: 100%;
             object-fit: fill;
             border-radius: 10px;
@@ -185,7 +190,8 @@
 
             .accordion-item {
                 width: 100%;
-                border-bottom: none; /* Remove default bottom border */
+                border-bottom: none;
+                /* Remove default bottom border */
             }
 
             .accordion-item:not(:last-child) {
@@ -194,27 +200,35 @@
 
             .accordion-item::after {
                 content: '';
-                display: none; /* Disable horizontal progress bar on mobile */
+                display: none;
+                /* Disable horizontal progress bar on mobile */
             }
 
-            .accordion-item.active:not(:last-child) .accordion-header::after {
+            .accordion-item.active .accordion-header::after {
                 content: '';
                 position: absolute;
-                top: 100%; /* Start at bottom of header */
+                top: 100%;
+                /* Start at bottom of header */
                 left: 0px;
-                width: 2px; /* Vertical line */
-                height: 0; /* Animate height */
+                width: 2px;
+                /* Vertical line */
+                height: 0;
+                /* Animate height */
                 background: #32CD33;
-                animation: vertical-progress 10s linear forwards; /* 10-second vertical progress */
-                z-index: 1; /* Ensure visibility over other elements */
+                animation: vertical-progress 10s linear forwards;
+                /* 10-second vertical progress */
+                z-index: 1;
+                /* Ensure visibility over other elements */
             }
 
             @keyframes vertical-progress {
                 from {
                     height: 0;
                 }
+
                 to {
-                    height: var(--progress-height, 100px); /* Dynamic height set by JS */
+                    height: var(--progress-height, 100px);
+                    /* Dynamic height set by JS */
                 }
             }
 
@@ -225,7 +239,8 @@
             }
 
             .accordion-item.active .accordion-item-image {
-                display: block; /* Show image only for active item */
+                display: block;
+                /* Show image only for active item */
                 opacity: 1;
                 transform: scale(1);
             }
@@ -236,10 +251,12 @@
             }
 
             .image-preview {
-                display: none; /* Hide separate image preview on mobile */
+                display: none;
+                /* Hide separate image preview on mobile */
             }
+
             .accordion-body {
-               margin-left: 15px;
+                margin-left: 15px;
             }
         }
     </style>
@@ -249,61 +266,71 @@
     <div class="accordion-wrapper">
         <div class="accordion">
             <div class="accordion-item active"
-                data-img="https://olqan.com/wp-content/uploads/2025/06/Finance-Colnsole.png">
+                data-img="https://olqan.com/wp-content/uploads/2025/07/Automate-attendance-shift-scheduling-and-leave-requests-1.png">
                 <a class="accordion-header">
                     <span>Generate invoices and manage expenses</span>
                     <span class="icon"><i class="fas fa-chevron-down"></i></span>
                 </a>
                 <div class="accordion-body">
                     <p>Track deals at each stage with intuitive drag-and-drop interfaces.</p>
-                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/Finance-Colnsole.png"
+                    <img class="accordion-item-image"
+                        src="https://olqan.com/wp-content/uploads/2025/07/Automate-attendance-shift-scheduling-and-leave-requests-1.png"
                         alt="Visual Pipeline View" />
                 </div>
             </div>
 
-            <div class="accordion-item" data-img="https://olqan.com/wp-content/uploads/2025/06/Sales-Hub.png">
+            <div class="accordion-item"
+                data-img="https://olqan.com/wp-content/uploads/2025/07/EnsureCentralize-employee-data-and-documents.png">
                 <a class="accordion-header">
                     <span>Track cash flow and monitor financial health</span>
                     <span class="icon"><i class="fas fa-chevron-down"></i></span>
                 </a>
                 <div class="accordion-body">
                     <p>Configure your pipeline to match your unique sales process.</p>
-                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/Sales-Hub.png"
+                    <img class="accordion-item-image"
+                        src="https://olqan.com/wp-content/uploads/2025/07/EnsureCentralize-employee-data-and-documents.png"
                         alt="Customizable Sales Stages" />
                 </div>
             </div>
 
-            <div class="accordion-item" data-img="https://olqan.com/wp-content/uploads/2025/06/Project-Suite.png">
+            <div class="accordion-item"
+                data-img="https://olqan.com/wp-content/uploads/2025/07/Celebrate-wins-with-built-in-recognition-tools-3.png">
                 <a class="accordion-header">
                     <span>Access reports with a click</span>
                     <span class="icon"><i class="fas fa-chevron-down"></i></span>
                 </a>
                 <div class="accordion-body">
                     <p>Monitor key information, including deal value, probability, and expected close date.</p>
-                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/Project-Suite.png"
+                    <img class="accordion-item-image"
+                        src="https://olqan.com/wp-content/uploads/2025/07/Celebrate-wins-with-built-in-recognition-tools-3.png"
                         alt="Deal Tracking" />
                 </div>
             </div>
 
-            <div class="accordion-item" data-img="https://olqan.com/wp-content/uploads/2025/06/HR-Portal.png">
+            <div class="accordion-item"
+                data-img="https://olqan.com/wp-content/uploads/2025/07/Spend-less-time-on-admin-more-on-strategy-1.png">
                 <a class="accordion-header">
                     <span>Stay compliant and ready for growth</span>
                     <span class="icon"><i class="fas fa-chevron-down"></i></span>
                 </a>
                 <div class="accordion-body">
                     <p>Schedule and track calls, meetings, and follow-ups.</p>
-                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/HR-Portal.png"
+                    <img class="accordion-item-image"
+                        src="https://olqan.com/wp-content/uploads/2025/07/Spend-less-time-on-admin-more-on-strategy-1.png"
                         alt="Activity Management" />
                 </div>
             </div>
         </div>
 
         <div class="image-preview">
-            <img id="preview-img" src="https://olqan.com/wp-content/uploads/2025/06/Finance-Colnsole.png"
+            <img id="preview-img"
+                src="https://olqan.com/wp-content/uploads/2025/07/Automate-attendance-shift-scheduling-and-leave-requests-1.png"
                 alt="Preview Image" />
         </div>
     </div>
 
+ 
+  
     <script>
         const headers = document.querySelectorAll('.accordion-header');
         const previewImg = document.getElementById('preview-img');
@@ -314,12 +341,9 @@
         // Function to calculate and set progress bar height for mobile
         function setProgressBarHeight(index) {
             if (window.innerWidth > 768) return; // Skip for large screens
-            if (index >= accordionItems.length - 1) return; // Skip for last item
-
             const activeItem = accordionItems[index];
-            const nextItem = accordionItems[index + 1];
+            const nextItem = index < accordionItems.length - 1 ? accordionItems[index + 1] : null;
             const activeHeader = activeItem.querySelector('.accordion-header');
-            const nextHeader = nextItem.querySelector('.accordion-header');
 
             // Wait for images to load to ensure accurate measurements
             const images = activeItem.querySelectorAll('img');
@@ -338,13 +362,27 @@
                 const wrapper = document.querySelector('.accordion-wrapper');
                 const wrapperRect = wrapper.getBoundingClientRect();
                 const activeHeaderRect = activeHeader.getBoundingClientRect();
-                const nextHeaderRect = nextHeader.getBoundingClientRect();
 
-                const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
-                const nextHeaderTop = nextHeaderRect.top - wrapperRect.top;
-                const distance = nextHeaderTop - activeHeaderBottom;
-
-                activeItem.querySelector('.accordion-header').style.setProperty('--progress-height', `${Math.max(distance, 0)}px`);
+                if (nextItem) {
+                    const nextHeader = nextItem.querySelector('.accordion-header');
+                    const nextHeaderRect = nextHeader.getBoundingClientRect();
+                    const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
+                    const nextHeaderTop = nextHeaderRect.top - wrapperRect.top;
+                    const distance = nextHeaderTop - activeHeaderBottom;
+                    activeHeader.style.setProperty('--progress-height', `${Math.max(distance, 0)}px`);
+                } else {
+                    // For the last item, calculate height based on the bottom of the image
+                    const image = activeItem.querySelector('.accordion-item-image');
+                    if (image) {
+                        const imageRect = image.getBoundingClientRect();
+                        const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
+                        const imageBottom = imageRect.bottom - wrapperRect.top;
+                        const distanceToImage = imageBottom - activeHeaderBottom;
+                        activeHeader.style.setProperty('--progress-height', `${Math.max(distanceToImage, 0)}px`);
+                    } else {
+                        activeHeader.style.setProperty('--progress-height', '0px'); // No image, hide progress bar
+                    }
+                }
             }
         }
 
@@ -451,4 +489,5 @@
         });
     </script>
 </body>
+
 </html>
