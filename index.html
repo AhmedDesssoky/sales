@@ -16,12 +16,10 @@
             border-radius: 12px;
             overflow: hidden;
             padding: 30px;
-            transition: transform 0.3s ease;
+            /* transition: transform 0.3s ease; */
         }
 
-        .accordion-wrapper:hover {
-            transform: translateY(-5px);
-        }
+      
 
         .accordion {
             flex: 1;
@@ -46,7 +44,7 @@
         }
 
         .accordion-item.active::after {
-            animation: progress 10s linear forwards; /* 10-second progress animation */
+            animation: progress 10s linear forwards; /* 10-second horizontal progress for large screens */
         }
 
         @keyframes progress {
@@ -75,6 +73,7 @@
             justify-content: space-between;
             align-items: center;
             transition: color 0.3s ease, transform 0.2s ease;
+            position: relative; /* Ensure accurate positioning */
         }
 
         .accordion-item:not(.active) .accordion-header {
@@ -94,10 +93,11 @@
             color: #555;
             font-size: 15px;
             opacity: 0;
+           
         }
 
         .accordion-item.active .accordion-body {
-            max-height: 300px;
+            max-height: 500px; /* Increased to accommodate image */
             padding: 10px 0 15px 0;
             opacity: 1;
         }
@@ -185,14 +185,47 @@
 
             .accordion-item {
                 width: 100%;
+                border-bottom: none; /* Remove default bottom border */
             }
 
-            .image-preview {
-                display: none; /* Hide separate image preview on mobile */
+            .accordion-item:not(:last-child) {
+                position: relative;
+            }
+
+            .accordion-item::after {
+                content: '';
+                display: none; /* Disable horizontal progress bar on mobile */
+            }
+
+            .accordion-item.active:not(:last-child) .accordion-header::after {
+                content: '';
+                position: absolute;
+                top: 100%; /* Start at bottom of header */
+                left: 0px;
+                width: 2px; /* Vertical line */
+                height: 0; /* Animate height */
+                background: #32CD33;
+                animation: vertical-progress 10s linear forwards; /* 10-second vertical progress */
+                z-index: 1; /* Ensure visibility over other elements */
+            }
+
+            @keyframes vertical-progress {
+                from {
+                    height: 0;
+                }
+                to {
+                    height: var(--progress-height, 100px); /* Dynamic height set by JS */
+                }
+            }
+
+            .accordion-item:not(.active) .accordion-header::after {
+                height: 0;
+                animation: none;
+                display: none;
             }
 
             .accordion-item.active .accordion-item-image {
-                display: block; /* Show image only for active item on mobile */
+                display: block; /* Show image only for active item */
                 opacity: 1;
                 transform: scale(1);
             }
@@ -200,6 +233,13 @@
             .accordion-item-image {
                 max-width: 100%;
                 margin-bottom: 15px;
+            }
+
+            .image-preview {
+                display: none; /* Hide separate image preview on mobile */
+            }
+            .accordion-body {
+               margin-left: 10px;
             }
         }
     </style>
@@ -271,26 +311,72 @@
         let currentIndex = 0;
         let animationFrameId = null;
 
+        // Function to calculate and set progress bar height for mobile
+        function setProgressBarHeight(index) {
+            if (window.innerWidth > 768) return; // Skip for large screens
+            if (index >= accordionItems.length - 1) return; // Skip for last item
+
+            const activeItem = accordionItems[index];
+            const nextItem = accordionItems[index + 1];
+            const activeHeader = activeItem.querySelector('.accordion-header');
+            const nextHeader = nextItem.querySelector('.accordion-header');
+
+            // Wait for images to load to ensure accurate measurements
+            const images = activeItem.querySelectorAll('img');
+            if (images.length > 0) {
+                Promise.all(Array.from(images).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => img.onload = resolve);
+                })).then(() => {
+                    calculateHeight();
+                });
+            } else {
+                calculateHeight();
+            }
+
+            function calculateHeight() {
+                const wrapper = document.querySelector('.accordion-wrapper');
+                const wrapperRect = wrapper.getBoundingClientRect();
+                const activeHeaderRect = activeHeader.getBoundingClientRect();
+                const nextHeaderRect = nextHeader.getBoundingClientRect();
+
+                const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
+                const nextHeaderTop = nextHeaderRect.top - wrapperRect.top;
+                const distance = nextHeaderTop - activeHeaderBottom;
+
+                activeItem.querySelector('.accordion-header').style.setProperty('--progress-height', `${Math.max(distance, 0)}px`);
+            }
+        }
+
         // Function to activate an accordion item
         function activateAccordion(index) {
-            accordionItems.forEach(item => item.classList.remove('active'));
+            accordionItems.forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('.accordion-header').style.setProperty('--progress-height', '0px'); // Reset height
+            });
             const newActiveItem = accordionItems[index];
             newActiveItem.classList.add('active');
 
-            // Update image preview for large screens
-            const imgSrc = newActiveItem.getAttribute('data-img');
-            previewImg.classList.add('loading');
-            previewImg.style.opacity = '0';
-            previewImg.style.transform = 'scale(0.95)';
+            // Ensure the header is fully positioned before measuring
             setTimeout(() => {
-                previewImg.src = imgSrc;
-                previewImg.style.opacity = '1';
-                previewImg.style.transform = 'scale(1)';
-                previewImg.classList.remove('loading');
-            }, 200);
+                // Update image preview for large screens
+                const imgSrc = newActiveItem.getAttribute('data-img');
+                previewImg.classList.add('loading');
+                previewImg.style.opacity = '0';
+                previewImg.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    previewImg.src = imgSrc;
+                    previewImg.style.opacity = '1';
+                    previewImg.style.transform = 'scale(1)';
+                    previewImg.classList.remove('loading');
+                }, 200);
 
-            // Start progress bar animation
-            startProgressAnimation(index);
+                // Set progress bar height for mobile after body is expanded
+                setProgressBarHeight(index);
+
+                // Start progress bar animation
+                startProgressAnimation(index);
+            }, 500); // Increased delay to 500ms for better stability
         }
 
         // Function to start progress bar animation
@@ -304,8 +390,8 @@
                 if (!startTime) startTime = timestamp;
                 const elapsed = timestamp - startTime;
                 const progress = Math.min((elapsed / 10000) * 100, 100); // 10000ms = 10s
-                activeItem.style.setProperty('--progress-width', `${progress}%`);
 
+                // Ensure the progress bar updates with the animation
                 if (progress < 100) {
                     animationFrameId = requestAnimationFrame(animate);
                 } else {
@@ -319,13 +405,14 @@
         }
 
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
+        window.onload = () => {
             const firstItem = document.querySelector('.accordion-item.active');
             const firstImgSrc = firstItem.getAttribute('data-img');
             previewImg.src = firstImgSrc;
             previewImg.style.opacity = '1';
+            setProgressBarHeight(0);
             startProgressAnimation(0);
-        });
+        };
 
         // Handle header clicks
         headers.forEach((header, index) => {
@@ -356,6 +443,11 @@
 
         document.querySelector('.accordion-wrapper').addEventListener('mouseleave', () => {
             startProgressAnimation(currentIndex);
+        });
+
+        // Recalculate progress bar height on window resize
+        window.addEventListener('resize', () => {
+            setProgressBarHeight(currentIndex);
         });
     </script>
 </body>
