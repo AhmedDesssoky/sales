@@ -46,7 +46,7 @@
         }
 
         .accordion-item.active::after {
-            animation: progress 10s linear forwards; /* Increased to 10 seconds */
+            animation: progress 10s linear forwards; /* 10-second progress animation */
         }
 
         @keyframes progress {
@@ -60,7 +60,7 @@
 
         .accordion-item:not(.active)::after {
             width: 0;
-            animation: none; /* Prevent animation on non-active items */
+            animation: none;
         }
 
         .accordion-header {
@@ -159,6 +159,49 @@
             transition: opacity 0.3s ease-in-out;
             opacity: 0;
         }
+
+        .accordion-item-image {
+            display: none; /* Hidden by default for all screens */
+            max-width: 100%;
+            object-fit: fill;
+            border-radius: 10px;
+            margin-top: 10px;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .accordion-wrapper {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .accordion {
+                margin: 10px 0;
+                min-width: 100%;
+            }
+
+            .accordion-item {
+                width: 100%;
+            }
+
+            .image-preview {
+                display: none; /* Hide separate image preview on mobile */
+            }
+
+            .accordion-item.active .accordion-item-image {
+                display: block; /* Show image only for active item on mobile */
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            .accordion-item-image {
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+        }
     </style>
 </head>
 
@@ -173,6 +216,8 @@
                 </a>
                 <div class="accordion-body">
                     <p>Track deals at each stage with intuitive drag-and-drop interfaces.</p>
+                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/Finance-Colnsole.png"
+                        alt="Visual Pipeline View" />
                 </div>
             </div>
 
@@ -183,6 +228,8 @@
                 </a>
                 <div class="accordion-body">
                     <p>Configure your pipeline to match your unique sales process.</p>
+                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/Sales-Hub.png"
+                        alt="Customizable Sales Stages" />
                 </div>
             </div>
 
@@ -193,6 +240,8 @@
                 </a>
                 <div class="accordion-body">
                     <p>Monitor key information, including deal value, probability, and expected close date.</p>
+                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/Project-Suite.png"
+                        alt="Deal Tracking" />
                 </div>
             </div>
 
@@ -203,6 +252,8 @@
                 </a>
                 <div class="accordion-body">
                     <p>Schedule and track calls, meetings, and follow-ups.</p>
+                    <img class="accordion-item-image" src="https://olqan.com/wp-content/uploads/2025/06/HR-Portal.png"
+                        alt="Activity Management" />
                 </div>
             </div>
         </div>
@@ -226,6 +277,7 @@
             const newActiveItem = accordionItems[index];
             newActiveItem.classList.add('active');
 
+            // Update image preview for large screens
             const imgSrc = newActiveItem.getAttribute('data-img');
             previewImg.classList.add('loading');
             previewImg.style.opacity = '0';
