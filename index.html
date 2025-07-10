@@ -4,10 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accordion with Progress Bar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
     <style>
+        * {
+           font-family: "Inter", sans-serif;
+        }
+
         .accordion-wrapper {
             display: flex;
             flex-wrap: wrap;
@@ -81,6 +88,9 @@
 
         .accordion-item:not(.active) .accordion-header {
             color: #888;
+        }
+        .accordion-item.active .accordion-header {
+            color: #32CD33;
         }
 
         .accordion-item:not(.active) .accordion-header:hover {
@@ -189,7 +199,7 @@
             }
 
             .accordion-header {
-               
+
                 font-size: 15px;
             }
 
@@ -337,161 +347,195 @@
 
 
 
-    <script>
-        const headers = document.querySelectorAll('.accordion-header');
-        const previewImg = document.getElementById('preview-img');
-        const accordionItems = document.querySelectorAll('.accordion-item');
-        let currentIndex = 0;
-        let animationFrameId = null;
+  <script>
+        // Ensure DOM is fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', () => {
+            const headers = document.querySelectorAll('.accordion-header');
+            const previewImg = document.getElementById('preview-img');
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            let currentIndex = 0;
+            let animationFrameId = null;
 
-        // Function to calculate and set progress bar height for mobile
-        function setProgressBarHeight(index) {
-            if (window.innerWidth > 768) return; // Skip for large screens
-            const activeItem = accordionItems[index];
-            const nextItem = index < accordionItems.length - 1 ? accordionItems[index + 1] : null;
-            const activeHeader = activeItem.querySelector('.accordion-header');
-
-            // Wait for images to load to ensure accurate measurements
-            const images = activeItem.querySelectorAll('img');
-            if (images.length > 0) {
-                Promise.all(Array.from(images).map(img => {
-                    if (img.complete) return Promise.resolve();
-                    return new Promise(resolve => img.onload = resolve);
-                })).then(() => {
-                    calculateHeight();
-                });
-            } else {
-                calculateHeight();
+            if (!previewImg) {
+                console.error('Preview image element not found!');
+                return;
             }
 
-            function calculateHeight() {
-                const wrapper = document.querySelector('.accordion-wrapper');
-                const wrapperRect = wrapper.getBoundingClientRect();
-                const activeHeaderRect = activeHeader.getBoundingClientRect();
+            // Function to calculate and set progress bar height for mobile
+            function setProgressBarHeight(index) {
+                if (window.innerWidth > 768) return; // Skip for large screens
+                const activeItem = accordionItems[index];
+                if (!activeItem) return;
+                const nextItem = index < accordionItems.length - 1 ? accordionItems[index + 1] : null;
+                const activeHeader = activeItem.querySelector('.accordion-header');
 
-                if (nextItem) {
-                    const nextHeader = nextItem.querySelector('.accordion-header');
-                    const nextHeaderRect = nextHeader.getBoundingClientRect();
-                    const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
-                    const nextHeaderTop = nextHeaderRect.top - wrapperRect.top;
-                    const distance = nextHeaderTop - activeHeaderBottom;
-                    activeHeader.style.setProperty('--progress-height', `${Math.max(distance, 0)}px`);
+                if (!activeHeader) return;
+
+                // Wait for images to load to ensure accurate measurements
+                const images = activeItem.querySelectorAll('img');
+                if (images.length > 0) {
+                    Promise.all(Array.from(images).map(img => {
+                        if (img.complete) return Promise.resolve();
+                        return new Promise(resolve => img.onload = resolve);
+                    })).then(() => {
+                        calculateHeight();
+                    });
                 } else {
-                    // For the last item, calculate height based on the bottom of the image
-                    const image = activeItem.querySelector('.accordion-item-image');
-                    if (image) {
-                        const imageRect = image.getBoundingClientRect();
-                        const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
-                        const imageBottom = imageRect.bottom - wrapperRect.top;
-                        const distanceToImage = imageBottom - activeHeaderBottom;
-                        activeHeader.style.setProperty('--progress-height', `${Math.max(distanceToImage, 0)}px`);
+                    calculateHeight();
+                }
+
+                function calculateHeight() {
+                    const wrapper = document.querySelector('.accordion-wrapper');
+                    if (!wrapper) return;
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    const activeHeaderRect = activeHeader.getBoundingClientRect();
+
+                    if (nextItem) {
+                        const nextHeader = nextItem.querySelector('.accordion-header');
+                        if (nextHeader) {
+                            const nextHeaderRect = nextHeader.getBoundingClientRect();
+                            const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
+                            const nextHeaderTop = nextHeaderRect.top - wrapperRect.top;
+                            const distance = nextHeaderTop - activeHeaderBottom;
+                            activeHeader.style.setProperty('--progress-height', `${Math.max(distance, 0)}px`);
+                        }
                     } else {
-                        activeHeader.style.setProperty('--progress-height', '0px'); // No image, hide progress bar
+                        const image = activeItem.querySelector('.accordion-item-image');
+                        if (image) {
+                            const imageRect = image.getBoundingClientRect();
+                            const activeHeaderBottom = activeHeaderRect.bottom - wrapperRect.top;
+                            const imageBottom = imageRect.bottom - wrapperRect.top;
+                            const distanceToImage = imageBottom - activeHeaderBottom;
+                            activeHeader.style.setProperty('--progress-height', `${Math.max(distanceToImage, 0)}px`);
+                        } else {
+                            activeHeader.style.setProperty('--progress-height', '0px');
+                        }
                     }
                 }
             }
-        }
 
-        // Function to activate an accordion item
-        function activateAccordion(index) {
-            accordionItems.forEach(item => {
-                item.classList.remove('active');
-                item.querySelector('.accordion-header').style.setProperty('--progress-height', '0px'); // Reset height
-            });
-            const newActiveItem = accordionItems[index];
-            newActiveItem.classList.add('active');
+            // Function to activate an accordion item
+            function activateAccordion(index) {
+                accordionItems.forEach(item => {
+                    if (item) {
+                        item.classList.remove('active');
+                        const header = item.querySelector('.accordion-header');
+                        if (header) header.style.setProperty('--progress-height', '0px');
+                    }
+                });
+                const newActiveItem = accordionItems[index];
+                if (newActiveItem) {
+                    newActiveItem.classList.add('active');
 
-            // Ensure the header is fully positioned before measuring
-            setTimeout(() => {
-                // Update image preview for large screens
-                const imgSrc = newActiveItem.getAttribute('data-img');
-                previewImg.classList.add('loading');
-                previewImg.style.opacity = '0';
-                previewImg.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    previewImg.src = imgSrc;
-                    previewImg.style.opacity = '1';
-                    previewImg.style.transform = 'scale(1)';
-                    previewImg.classList.remove('loading');
-                }, 200);
+                    setTimeout(() => {
+                        const imgSrc = newActiveItem.getAttribute('data-img');
+                        if (previewImg && imgSrc) {
+                            previewImg.classList.add('loading');
+                            previewImg.style.opacity = '0';
+                            previewImg.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                previewImg.src = imgSrc;
+                                previewImg.style.opacity = '1';
+                                previewImg.style.transform = 'scale(1)';
+                                previewImg.classList.remove('loading');
+                            }, 200);
+                        }
 
-                // Set progress bar height for mobile after body is expanded
-                setProgressBarHeight(index);
-
-                // Start progress bar animation
-                startProgressAnimation(index);
-            }, 500); // Increased delay to 500ms for better stability
-        }
-
-        // Function to start progress bar animation
-        function startProgressAnimation(index) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-
-            const activeItem = accordionItems[index];
-            let startTime = null;
-
-            function animate(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const elapsed = timestamp - startTime;
-                const progress = Math.min((elapsed / 10000) * 100, 100); // 10000ms = 10s
-
-                // Ensure the progress bar updates with the animation
-                if (progress < 100) {
-                    animationFrameId = requestAnimationFrame(animate);
-                } else {
-                    // Move to the next item
-                    currentIndex = (currentIndex + 1) % accordionItems.length;
-                    activateAccordion(currentIndex);
+                        setProgressBarHeight(index);
+                        startProgressAnimation(index);
+                    }, 200);
                 }
             }
 
-            animationFrameId = requestAnimationFrame(animate);
-        }
+            // Function to start progress bar animation
+            function startProgressAnimation(index) {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
-        // Initialize on page load
-        window.onload = () => {
+                const activeItem = accordionItems[index];
+                if (!activeItem) return;
+                let startTime = null;
+
+                function animate(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const elapsed = timestamp - startTime;
+                    const progress = Math.min((elapsed / 10000) * 100, 100);
+
+                    if (progress < 100) {
+                        animationFrameId = requestAnimationFrame(animate);
+                    } else {
+                        const header = activeItem.querySelector('.accordion-header');
+                        if (header) header.style.setProperty('--progress-height', '0px');
+                        currentIndex = (currentIndex + 1) % accordionItems.length;
+                        activateAccordion(currentIndex);
+                    }
+                }
+
+                animationFrameId = requestAnimationFrame(animate);
+            }
+
+            // Initialize on page load
             const firstItem = document.querySelector('.accordion-item.active');
-            const firstImgSrc = firstItem.getAttribute('data-img');
-            previewImg.src = firstImgSrc;
-            previewImg.style.opacity = '1';
-            setProgressBarHeight(0);
-            startProgressAnimation(0);
-        };
+            if (firstItem) {
+                const firstImgSrc = firstItem.getAttribute('data-img');
+                if (previewImg && firstImgSrc) {
+                    previewImg.src = firstImgSrc;
+                    previewImg.style.opacity = '1';
+                }
+                setProgressBarHeight(0);
+                startProgressAnimation(0);
+            }
 
-        // Handle header clicks
-        headers.forEach((header, index) => {
-            header.addEventListener('click', () => {
-                if (!header.parentElement.classList.contains('active')) {
-                    currentIndex = index;
-                    activateAccordion(index);
+            // Handle header clicks
+            headers.forEach((header, index) => {
+                if (header) {
+                    header.addEventListener('click', () => {
+                        const item = header.parentElement;
+                        if (item && item.classList.contains('active')) {
+                            item.classList.remove('active');
+                            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                            const itemHeader = item.querySelector('.accordion-header');
+                            if (itemHeader) itemHeader.style.setProperty('--progress-height', '0px');
+                            if (index === accordionItems.length - 1) {
+                                currentIndex = 0;
+                                activateAccordion(0);
+                                startProgressAnimation(0);
+                            }
+                        } else if (item) {
+                            currentIndex = index;
+                            activateAccordion(index);
+                        }
+                    });
+
+                    header.addEventListener('mouseenter', () => {
+                        if (item && !item.classList.contains('active')) {
+                            header.style.transform = 'translateX(5px)';
+                        }
+                    });
+
+                    header.addEventListener('mouseleave', () => {
+                        if (item && !item.classList.contains('active')) {
+                            header.style.transform = 'translateX(0)';
+                        }
+                    });
                 }
             });
 
-            header.addEventListener('mouseenter', () => {
-                if (!header.parentElement.classList.contains('active')) {
-                    header.style.transform = 'translateX(5px)';
-                }
+            // Pause/resume animation on hover
+            const wrapper = document.querySelector('.accordion-wrapper');
+            if (wrapper) {
+                wrapper.addEventListener('mouseenter', () => {
+                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                    startProgressAnimation(currentIndex);
+                });
+            }
+
+            // Recalculate progress bar height on window resize
+            window.addEventListener('resize', () => {
+                setProgressBarHeight(currentIndex);
             });
-
-            header.addEventListener('mouseleave', () => {
-                if (!header.parentElement.classList.contains('active')) {
-                    header.style.transform = 'translateX(0)';
-                }
-            });
-        });
-
-        // Pause/resume animation on hover
-        document.querySelector('.accordion-wrapper').addEventListener('mouseenter', () => {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        });
-
-        document.querySelector('.accordion-wrapper').addEventListener('mouseleave', () => {
-            startProgressAnimation(currentIndex);
-        });
-
-        // Recalculate progress bar height on window resize
-        window.addEventListener('resize', () => {
-            setProgressBarHeight(currentIndex);
         });
     </script>
 </body>
